@@ -74,4 +74,74 @@
 
 `vm api.js`
 
+## create a Model since the app is going to use mongodb. A model is at the heart of JavaScript based applications, and it is what makes it interactive. We will also use models to define the database schema . This is important so that we will be able to define the fields stored in each Mongodb document. To create a Schema and a model, install mongoose which is a Node.js package that makes working with mongodb easier.
+
+`npm install mongoose`
+
+![mongoose](./images/Mongoose%20installed.PNG)
+
+## Create a new models
+
+`mkdir models`
+
+`cd models`
+
+`touch todo.js`
+
+`vim todo.js`
+
+`const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+//create schema for todo
+const TodoSchema = new Schema({
+action: {
+type: String,
+required: [true, 'The todo text field is required']
+}
+})
+
+//create model for todo
+const Todo = mongoose.model('todo', TodoSchema);
+
+module.exports = Todo;`
+
+
+`vim api.js`
+
+`const express = require ('express');
+const router = express.Router();
+const Todo = require('../models/todo');
+
+router.get('/todos', (req, res, next) => {
+
+//this will return all the data, exposing only the id and action field to the client
+Todo.find({}, 'action')
+.then(data => res.json(data))
+.catch(next)
+});
+
+router.post('/todos', (req, res, next) => {
+if(req.body.action){
+Todo.create(req.body)
+.then(data => res.json(data))
+.catch(next)
+}else {
+res.json({
+error: "The input field is empty"
+})
+}
+});
+
+router.delete('/todos/:id', (req, res, next) => {
+Todo.findOneAndDelete({"_id": req.params.id})
+.then(data => res.json(data))
+.catch(next)
+})
+
+module.exports = router;`
+
+## MONGODB DATABASE
+
+## 
 
